@@ -7,7 +7,7 @@ class HelloWorld(object):
 
 
 cherrypy.config.update({'server.socket_host': '0.0.0.0',
-                        'server.socket_port': 80,
+                        'server.socket_port': 8080,
                        })
 
 cherrypy.quickstart(HelloWorld())
