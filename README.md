@@ -2,6 +2,8 @@
 
 Python webapp based on CherryPy that implements some of PyMuPDF functions
 
+```pip install -r requirements.txt```
+
 ```python index.py```
 
 ```http://127.0.0.1:8080```
