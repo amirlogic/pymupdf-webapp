@@ -17,9 +17,7 @@ class WebApp(object):
     @cherrypy.expose
     def getfile(self,input):
         try:
-            #upfile = open(cherrypy.serving.request.body['input'])
-            #upfile = pymupdf.open(input)
-            #return upfile.read()
+            
             print("File upload processing...")
             print("Content length:",cherrypy.serving.request.headers['Content-length'])
             print("Content type:",cherrypy.serving.request.headers['Content-type'])
@@ -37,10 +35,19 @@ class WebApp(object):
 
             print("Metadata: ", doc.metadata)
 
-            doc.close()
+            print("Pages: ", doc.page_count)
 
+            output = ""
+
+            for page in doc: # iterate the document pages
+                text = page.get_text().encode("utf8") # get plain text (is in UTF-8)
+                print("Page text: ",text)
+                output += str(text) # write text of page
+
+
+            doc.close()
             
-            return doc.metadata
+            return "Text Content: \n" + output #doc.metadata
 
            
         except:
