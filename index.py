@@ -10,6 +10,43 @@ class WebApp(object):
         return "Welcome to CherryPy!"
 
     @cherrypy.expose
+    def upload(self):
+        htfile = open('upload.html','r')
+        return htfile
+
+    @cherrypy.expose
+    def getfile(self,input):
+        try:
+            #upfile = open(cherrypy.serving.request.body['input'])
+            #upfile = pymupdf.open(input)
+            #return upfile.read()
+            print("File upload processing...")
+            print("Content length:",cherrypy.serving.request.headers['Content-length'])
+            print("Content type:",cherrypy.serving.request.headers['Content-type'])
+
+            if not input.file:
+                return "No file uploaded or invalid file."
+
+            print("Filename: ", input.filename)
+
+            upfile_bytes = BytesIO(input.file.read())
+
+            upfile_bytes.seek(0)
+
+            doc = pymupdf.open(stream=upfile_bytes)
+
+            print("Metadata: ", doc.metadata)
+
+            doc.close()
+
+            
+            return doc.metadata
+
+           
+        except:
+            return "Error!" 
+
+    @cherrypy.expose
     def generate(self,wtext="EMPTY"):
 
         doc = pymupdf.open()
