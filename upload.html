@@ -14,6 +14,11 @@
 
                 <form action="getfile" method="POST" enctype="multipart/form-data">
                     <input type="file" id="input" name="input" />
+                    <select name="mode">
+                        <option value="meta" selected>Metadata</option>
+                        <option value="text" selected>Extract Text</option>
+                        <option value="images" selected>Extract Images</option>
+                    </select>
                     <button type="submit">Submit</button>
                 </form>
 

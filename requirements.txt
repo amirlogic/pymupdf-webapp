@@ -9,13 +9,17 @@ jaraco.collections==5.1.0
 jaraco.context==6.0.1
 jaraco.functools==4.0.2
 jaraco.text==4.0.0
+Jinja2==3.1.4
+MarkupSafe==2.1.5
 more-itertools==10.4.0
 portend==3.2.0
 PyMuPDF==1.24.10
 PyMuPDFb==1.24.10
 python-dateutil==2.9.0.post0
+pytube==15.0.0
 requests==2.32.3
 six==1.16.0
 tempora==5.7.0
 urllib3==2.2.2
+youtube-dl==2021.12.17
 zc.lockfile==3.0.post1

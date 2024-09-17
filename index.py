@@ -3,6 +3,14 @@ import cherrypy
 import pymupdf
 from io import BytesIO
 #import tempfile
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+jenv = Environment(
+    loader=FileSystemLoader(''),
+    autoescape=select_autoescape()
+)
+
+info_template = jenv.get_template("fileinfo.html")
 
 class WebApp(object):
     @cherrypy.expose
@@ -33,6 +41,8 @@ class WebApp(object):
 
             doc = pymupdf.open(stream=upfile_bytes)
 
+
+
             print("Metadata: ", doc.metadata)
 
             print("Pages: ", doc.page_count)
@@ -47,7 +57,13 @@ class WebApp(object):
 
             doc.close()
             
-            return "Text Content: \n" + output #doc.metadata
+
+
+            #return "Text Content: \n" + output #doc.metadata
+
+            #infodict = {"title":doc.metadata['title'], "format":doc.metadata['format'], "creationDate":doc.metadata['creationDate'],  }
+
+            return info_template.render(doc.metadata)   #infodict  format=doc.metadata['format']
 
            
         except:
