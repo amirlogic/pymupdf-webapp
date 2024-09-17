@@ -27,22 +27,24 @@ class WebApp(object):
     def getfile(self,input,mode):
         try:
             
+            print("File upload processing...")
+            print("Content length:",cherrypy.serving.request.headers['Content-length'])
+            print("Content type:",cherrypy.serving.request.headers['Content-type'])
+
+            if not input.file:
+                return "No file uploaded or invalid file."
+
+            print("Filename: ", input.filename)
+
+            upfile_bytes = BytesIO(input.file.read())
+
+            upfile_bytes.seek(0)
+
+            doc = pymupdf.open(stream=upfile_bytes)
+
             if(mode=="meta"):
 
-                print("File upload processing...")
-                print("Content length:",cherrypy.serving.request.headers['Content-length'])
-                print("Content type:",cherrypy.serving.request.headers['Content-type'])
-
-                if not input.file:
-                    return "No file uploaded or invalid file."
-
-                print("Filename: ", input.filename)
-
-                upfile_bytes = BytesIO(input.file.read())
-
-                upfile_bytes.seek(0)
-
-                doc = pymupdf.open(stream=upfile_bytes)
+                
 
                 print("Metadata: ", doc.metadata)
 
@@ -69,6 +71,34 @@ class WebApp(object):
 
             elif(mode=="images"):
                 return "Extracting images"
+
+            elif(mode=="tables"):
+
+                html = "<html><body>"
+
+                for page in doc:
+                    tbls = page.find_tables()
+                    print("Tables found: ",len(tbls.tables))
+                    html += "<div>"
+                    if(len(tbls.tables)>0):
+                        print("This page contains tables")
+                        for wt in tbls.tables:
+                            cr = wt.extract()
+                            print(cr)
+                            html += "<div>Here is a table:<table style=\"margin:50px\">"
+                            #html += "<tr><td>" + type(wt) + "</td></tr>"
+                            for r in cr:
+                                
+                                html += "<tr>"
+                                html += "<td>" + str(r[0]) + "</td><td>" + str(r[1]) + "</td>"
+                                html += "</tr>"
+
+                            html += "</table><div>"
+                    html += "</div>"    
+
+                html += "</body></html>"
+
+                return html
 
             else:
                 return "Unknown action"
