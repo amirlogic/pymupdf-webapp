@@ -15,7 +15,8 @@ info_template = jenv.get_template("fileinfo.html")
 class WebApp(object):
     @cherrypy.expose
     def index(self):
-        return "Welcome to CherryPy!"
+        htfile = open('home.html','r')
+        return htfile
 
     @cherrypy.expose
     def upload(self):
@@ -23,48 +24,54 @@ class WebApp(object):
         return htfile
 
     @cherrypy.expose
-    def getfile(self,input):
+    def getfile(self,input,mode):
         try:
             
-            print("File upload processing...")
-            print("Content length:",cherrypy.serving.request.headers['Content-length'])
-            print("Content type:",cherrypy.serving.request.headers['Content-type'])
+            if(mode=="meta"):
 
-            if not input.file:
-                return "No file uploaded or invalid file."
+                print("File upload processing...")
+                print("Content length:",cherrypy.serving.request.headers['Content-length'])
+                print("Content type:",cherrypy.serving.request.headers['Content-type'])
 
-            print("Filename: ", input.filename)
+                if not input.file:
+                    return "No file uploaded or invalid file."
 
-            upfile_bytes = BytesIO(input.file.read())
+                print("Filename: ", input.filename)
 
-            upfile_bytes.seek(0)
+                upfile_bytes = BytesIO(input.file.read())
 
-            doc = pymupdf.open(stream=upfile_bytes)
+                upfile_bytes.seek(0)
 
+                doc = pymupdf.open(stream=upfile_bytes)
 
+                print("Metadata: ", doc.metadata)
 
-            print("Metadata: ", doc.metadata)
+                print("Pages: ", doc.page_count)
 
-            print("Pages: ", doc.page_count)
+                output = ""
 
-            output = ""
-
-            for page in doc: # iterate the document pages
-                text = page.get_text().encode("utf8") # get plain text (is in UTF-8)
-                print("Page text: ",text)
-                output += str(text) # write text of page
-
-
-            doc.close()
-            
+                for page in doc: # iterate the document pages
+                    text = page.get_text().encode("utf8") # get plain text (is in UTF-8)
+                    print("Page text: ",text)
+                    output += str(text) # write text of page
 
 
-            #return "Text Content: \n" + output #doc.metadata
+                doc.close()
+                
 
-            #infodict = {"title":doc.metadata['title'], "format":doc.metadata['format'], "creationDate":doc.metadata['creationDate'],  }
+                #return "Text Content: \n" + output #doc.metadata
+                #infodict = {"title":doc.metadata['title'], "format":doc.metadata['format'], "creationDate":doc.metadata['creationDate'],  }
 
-            return info_template.render(doc.metadata)   #infodict  format=doc.metadata['format']
+                return info_template.render(doc.metadata)   #infodict  format=doc.metadata['format']
 
+            elif(mode=="text"):
+                return "Extracting text"
+
+            elif(mode=="images"):
+                return "Extracting images"
+
+            else:
+                return "Unknown action"
            
         except:
             return "Error!" 
