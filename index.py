@@ -10,8 +10,6 @@ jenv = Environment(
     autoescape=select_autoescape()
 )
 
-info_template = jenv.get_template("fileinfo.html")
-
 class WebApp(object):
     @cherrypy.expose
     def index(self):
@@ -44,11 +42,24 @@ class WebApp(object):
 
             if(mode=="meta"):
 
+                info_template = jenv.get_template("fileinfo.html")
+
+                pgCount = doc.page_count
+
+                metaData = doc.metadata
+
+                metaData['pgCount'] = pgCount
+
+                print("Metadata: ", metaData)
+
+                print("Pages: ", pgCount)
+
+                doc.close()
                 
 
-                print("Metadata: ", doc.metadata)
+                return info_template.render(metaData)   
 
-                print("Pages: ", doc.page_count)
+            elif(mode=="text"):
 
                 output = ""
 
@@ -57,19 +68,14 @@ class WebApp(object):
                     print("Page text: ",text)
                     output += str(text) # write text of page
 
-
                 doc.close()
-                
 
-                #return "Text Content: \n" + output #doc.metadata
-                #infodict = {"title":doc.metadata['title'], "format":doc.metadata['format'], "creationDate":doc.metadata['creationDate'],  }
-
-                return info_template.render(doc.metadata)   #infodict  format=doc.metadata['format']
-
-            elif(mode=="text"):
                 return "Extracting text"
 
             elif(mode=="images"):
+
+                doc.close()
+
                 return "Extracting images"
 
             elif(mode=="tables"):
@@ -97,6 +103,8 @@ class WebApp(object):
                     html += "</div>"    
 
                 html += "</body></html>"
+
+                doc.close()
 
                 return html
 
