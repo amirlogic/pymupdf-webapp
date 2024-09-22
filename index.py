@@ -18,8 +18,10 @@ class WebApp(object):
 
     @cherrypy.expose
     def upload(self):
-        htfile = open('upload.html','r')
-        return htfile
+
+        upload_template = jenv.get_template("upload.html")
+        #htfile = open('upload.html','r')
+        return upload_template.render()
 
     @cherrypy.expose
     def getfile(self,input,mode):
