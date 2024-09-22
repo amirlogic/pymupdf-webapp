@@ -72,7 +72,7 @@ class WebApp(object):
 
                 doc.close()
 
-                return "Extracting text"
+                return "Extracting text"+output
 
             elif(mode=="images"):
 
