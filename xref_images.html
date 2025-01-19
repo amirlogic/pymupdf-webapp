@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}XRef Image{% endblock %}
+{% block content %}
+            <h1>Images</h1>
+            <div class="p-2">
+                {% for row in payload %}
+                <div style="padding:10px;">
+                    <div>{{row.img_header}}</div>
+                    <img src="data:image/'{{row.ext}};base64,{{row.base64}}"  />
+
+                </div>
+                {% endfor %}
+            </div>
+{% endblock %}

@@ -2,7 +2,9 @@ import cherrypy
 #from cherrypy.lib.static import serve_file
 import pymupdf
 from io import BytesIO
-#import tempfile
+
+import base64
+
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 jenv = Environment(
@@ -76,9 +78,40 @@ class WebApp(object):
 
             elif(mode=="images"):
 
+                lenXREF = doc.xref_length()
+
+                imgcount = 0
+
+                html_content = ""
+
+                ximages = []
+
+                for xref in range(1, lenXREF):
+    
+                    if(doc.xref_get_key(xref, "Subtype")[1] == "/Image"):
+
+                        imgcount += 1
+
+                        imgdata = doc.extract_image(xref)
+
+                        base64_bytes = base64.b64encode(imgdata['image'])
+
+                        base64_string = base64_bytes.decode("ascii")
+
+
+                        img_header = 'Image xref='+str(xref)+' ext: '+ imgdata['ext'] +' width: '+ str(imgdata['width']) +' height: '+ str(imgdata['height'])
+
+                        html_content += '<img src="data:image/' + imgdata['ext'] + ';base64,' + base64_string + '" alt="xref' + str(xref) + '" />'  
+
+
+                        ximages.append({ "img_header":img_header, "ext":imgdata['ext'], "base64":base64_string })
+        
+
+                payload_template = jenv.get_template("xref_images.html")
+
                 doc.close()
 
-                return "Extracting images"
+                return payload_template.render({"payload":ximages})   
 
             elif(mode=="tables"):
 
@@ -114,6 +147,7 @@ class WebApp(object):
                 return "Unknown action"
            
         except:
+            print("Error! mode ",mode)
             return "Error!" 
 
     @cherrypy.expose
