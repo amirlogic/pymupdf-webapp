@@ -5,7 +5,7 @@
             <div class="p-2">
                 {% for row in payload %}
                 <div style="padding:10px;">
-                    <div>{{row.img_header}}</div>
+                    <div><pre>{{row.img_header}}</pre></div>
                     <img src="data:image/'{{row.ext}};base64,{{row.base64}}"  />
 
                 </div>
