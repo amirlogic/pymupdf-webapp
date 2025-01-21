@@ -113,6 +113,26 @@ class WebApp(object):
 
                 return payload_template.render({"payload":ximages})   
 
+            elif(mode=="embedded"):
+
+                embcount = doc.embfile_count()
+
+                embhtml = ""
+
+                for emb in range(embcount):
+                    #print("\n")
+                    embhtml += "<p>" + doc.embfile_info(emb)['filename'] + "</p>"
+                    #print(embdata)
+                    #print("\n")
+                    
+                embfile_template = jenv.get_template("embedded.html")
+
+                doc.close()
+
+                return "<div>Emb count: " + str(embcount) + "</div><div>" + embhtml + "</div>"
+
+                #return embfile_template.render({"payload":ximages})   
+            
             elif(mode=="tables"):
 
                 html = "<html><body>"

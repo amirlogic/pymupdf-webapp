@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Embedded{% endblock %}
+{% block content %}
+            <h1>Embedded Files ({{count}})</h1>
+            <div class="p-2">
+                {% for row in payload %}
+                <div style="padding:10px;">
+                    <div><pre>{{row.img_header}}</pre></div>
+
+                </div>
+                {% endfor %}
+            </div>
+{% endblock %}
